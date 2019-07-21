@@ -1,11 +1,13 @@
-NAME = ls
+NAME = ft_ls
+
+INC_DIR :=		./include
 
 SRC_DIR :=		./src
 SRC :=			main.c			\
 
 vpath %.c		$(SRC_DIR)
 
-LIB_DIR :=		./lib
+LIB_DIR :=		./subprojects
 
 LIBFT_DIR :=		$(LIB_DIR)/libft
 LIBFT_INC :=		$(LIBFT_DIR)/includes
@@ -19,7 +21,7 @@ CC = clang
 CFLAGS = -Wall -Wextra -Werror
 LFLAGS = $(LIBFT_LFLAGS)
 
-INC := $(LIBFT_INC)
+INC := $(LIBFT_INC) $(INC_DIR)
 INC_PARAMS := $(INC:%=-I%)
 
 all: $(NAME)

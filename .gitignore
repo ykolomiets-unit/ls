@@ -1,4 +1,6 @@
-ls
+ft_ls
+
+build/
 
 *.o
 libft.a

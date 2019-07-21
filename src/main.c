@@ -1,7 +1,11 @@
-#include "libft.h"
+#include <stdio.h>
 
-int	main(void)
+int	main(int argc, char **argv)
 {
-	ft_printf("Hello, world!\nHere will be ls-program\n");
+	(void)argc;
+	(void)argv;
+
+	printf("Hello, world!\nHere will be ls-program\n");
+
 	return (0);
 }
