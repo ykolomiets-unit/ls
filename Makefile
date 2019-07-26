@@ -26,6 +26,9 @@ INC_PARAMS := $(INC:%=-I%)
 
 all: $(NAME)
 
+debug: CFLAGS += -DDEBUG -g -O0
+debug: $(NAME)
+
 $(NAME): $(LIBFT) $(OBJ)
 	$(CC) $(LFLAGS) -o $(NAME) $(OBJ)
 
@@ -43,6 +46,10 @@ $(OBJ_DIR)/%.o: %.c
 $(LIBFT):
 	make -C $(LIBFT_DIR)
 
-.PHONY: clean
 clean:
-	-rm $(NAME) $(OBJ)
+	rm $(OBJ)
+
+fclean: clean
+	rm $(NAME)
+	
+.PHONY: clean fclean
