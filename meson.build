@@ -1,4 +1,4 @@
-project('ft_ls', 'c', default_options:['buildtype=plain'])
+project('ft_ls', 'c', default_options:['buildtype=debug'])
 
 src = [
 	'src/main.c',
