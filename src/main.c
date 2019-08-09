@@ -81,13 +81,25 @@ typedef struct	s_failed_file
 	int			error_code;
 }				t_failed_file;
 
+int		failed_cmp(const void *a, const void *b)
+{
+	return ft_strcmp(((t_failed_file *)a)->name,((t_failed_file *)b)->name);
+}
 
+void	print_failed_files(t_failed_file *failed, int count)
+{
+	qsort(failed, count, sizeof(t_failed_file), failed_cmp); //TODO: implement own qsort
+	for (int i = 0; i < count; i++)
+	{
+		ft_printf("ls: %s: %s\n", failed[i].name, strerror(failed[i].error_code));
+	}
+}
 
 void	process_passed_files(char **file_names, int file_names_count, t_flags flags)
 {
 	(void)flags;
-	t_stat	info;
-	char	*filename;
+	t_stat			info;
+	char			*filename;
 	t_failed_file	*failed;
 	int				failed_count;
 	t_file			*files;
@@ -116,7 +128,7 @@ void	process_passed_files(char **file_names, int file_names_count, t_flags flags
 		}
 		file_names++;
 	}
-	ft_printf("FAILED: %d\n", failed_count);
+	print_failed_files(failed, failed_count);
 	ft_printf("FILES: %d\n", files_count);
 	ft_printf("DIRS: %d\n", directories_count);
 	free(failed);
