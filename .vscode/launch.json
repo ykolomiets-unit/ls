@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch",
+      "name": "Launch Meson",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/build/ft_ls",
@@ -16,6 +16,19 @@
       "externalConsole": false,
       "MIMode": "lldb",
       "preLaunchTask": "Build with Meson"
+    },
+    {
+      "name": "Launch Make",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/ft_ls",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb",
+      "preLaunchTask": "Build with Make"
     }
   ]
 }
