@@ -1,20 +1,9 @@
 #include "ls.h"
 #include "libft.h"
-#include <sys/stat.h>
 #include <sys/errno.h>
 #include <stdlib.h>
 
 extern int errno;
-
-struct	file_info {
-	char		*name;
-	struct stat	stat;
-};
-
-struct	failed_file_info {
-	char	*name;
-	int	error_code;
-};
 
 static int	failed_cmp(const void *a, const void *b)
 {
@@ -25,7 +14,7 @@ static void	print_failed_files(struct failed_file_info *failed, int count)
 {
 	qsort(failed, count, sizeof(failed[0]), failed_cmp);
 	for (int i = 0; i < count; i++)	{
-		ft_printf("ls: %s: %s\n", failed[i].name, strerror(failed[i].error_code));
+		ft_error(0, failed[i].error_code, "%s", failed[i].name);
 	}
 }
 
@@ -60,7 +49,6 @@ static void	sort_passed_files_by_type(
 
 void	process_passed_files(char **file_names, int file_names_count, struct ls_flags flags)
 {
-	(void)flags;
 	struct failed_file_info	*failed;
 	int			failed_count = 0;
 	struct file_info	*files;
@@ -71,19 +59,30 @@ void	process_passed_files(char **file_names, int file_names_count, struct ls_fla
 	failed = ft_memalloc(sizeof(struct failed_file_info) * file_names_count);
 	files = ft_memalloc(sizeof(struct file_info) * file_names_count);
 	directories = ft_memalloc(sizeof(struct file_info) * file_names_count);
-	sort_passed_files_by_type(file_names, failed, &failed_count, files, &files_count, directories, &directories_count);
+	sort_passed_files_by_type(file_names, failed, &failed_count, files, &files_count,
+					directories, &directories_count);
+
 	if (failed_count > 0) {
 		print_failed_files(failed, failed_count);
 	}
 	free(failed);
 
+	if (files_count > 0) {
+		process_files(files, files_count, flags);
+		if (directories_count > 0) {
+			ft_putchar('\n');
+		}
+	}
 	free(files);
+
+	if (directories_count > 0) {
+		process_directories(directories, directories_count, flags, file_names_count > 1);
+	}
 	free(directories);
 }
 
 int main(int argc, char **argv)
 {
-	(void)argc;
 	static char	*dotav[] = { "." };
 	struct ls_flags	flags;
 

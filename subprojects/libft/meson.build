@@ -68,6 +68,7 @@ src = [
 	'src/ft_strdel.c',
 	'src/ft_strmapi.c',
 	'src/ft_strsub.c',
+	'src/ft_error.c',
 	'src/printf/big_int.c',
 	'src/printf/big_int_addition.c',
 	'src/printf/big_int_division.c',

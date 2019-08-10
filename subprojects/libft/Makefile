@@ -89,6 +89,7 @@ SRC :=			ft_memset.c		\
 				ft_atoi_base.c	\
 				ft_count_word.c	\
 				ft_ceil.c		\
+				ft_error.c		\
 
 
 PRINTF_SRC :=	ft_printf.c						\

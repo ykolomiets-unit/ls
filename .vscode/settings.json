@@ -9,9 +9,21 @@
 	},
     	"mesonbuild.configureOnOpen": true,
 	"editor.insertSpaces": false,
+	"editor.rulers": [
+		80
+	],
         "C_Cpp.formatting": "Disabled",
         "editor.tabSize": 8,
         "editor.autoIndent": false,
 	"editor.detectIndentation": false,
 	"C_Cpp.default.cStandard": "c99",
+	"files.associations": {
+		"stdbool.h": "c",
+		"error.h": "c",
+		"err.h": "c",
+		"_types.h": "c",
+		"stdlib.h": "c",
+		"errno.h": "c",
+		"libft.h": "c"
+	},
 }

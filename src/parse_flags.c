@@ -1,8 +1,7 @@
 #include "ls.h"
 #include "libft.h"
-#include <stdlib.h>
 
-#define USAGE_STR "usage: ls [-alrtR] [file ...]\n"
+#define USAGE_STR "usage: ls [-alrtR] [file ...]"
 
 void	parse_flags(char ***argv, int *argc, struct ls_flags *flags)
 {
@@ -18,23 +17,22 @@ void	parse_flags(char ***argv, int *argc, struct ls_flags *flags)
 		while (*argument) {
 			switch(*argument) {
 			case 'l':
-				flags->list = TRUE;
+				flags->list = true;
 				break;
 			case 'R':
-				flags->recursive = TRUE;
+				flags->recursive = true;
 				break;
 			case 'a':
-				flags->show_hidden = TRUE;
+				flags->show_hidden = true;
 				break;
 			case 'r':
-				flags->reverse = TRUE;
+				flags->reverse = true;
 				break;
 			case 't':
 				flags->sort_type = SORT_BY_TIME_MODIFIED;
 				break;
 			default:
-				ft_dprintf(2, "ls: illegal option -- %c\n%s", *argument, USAGE_STR);
-				exit(1);
+				ft_error(1, 0, "illegal option -- %c\n%s", *argument, USAGE_STR);
 			}
 			argument++;
 		}

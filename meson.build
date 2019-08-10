@@ -3,6 +3,8 @@ project('ft_ls', 'c', default_options:['buildtype=debug'])
 src = [
 	'src/main.c',
 	'src/parse_flags.c',
+	'src/process_files.c',
+	'src/process_directories.c',
 ]
 
 inc = include_directories('include')

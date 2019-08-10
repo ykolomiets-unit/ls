@@ -14,7 +14,7 @@
 
 int			ft_dprintf(const int fd, const char *restrict fmt, ...)
 {
-	int			printed;
+	int		printed;
 	va_list		ap;
 
 	va_start(ap, fmt);
