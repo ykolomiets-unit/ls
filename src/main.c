@@ -1,137 +1,82 @@
+#include "ls.h"
 #include "libft.h"
-#include <stdlib.h>
-#include <stdio.h>
 #include <sys/stat.h>
 #include <sys/errno.h>
+#include <stdlib.h>
 
-#define USAGE_STR "usage: ls [-alrtR] [file ...]\n"
+extern int errno;
 
-#define TRUE	1
-#define FALSE	0
-
-#define SORT_BY_NAME			0
-#define SORT_BY_TIME_MODIFIED	1
-#define SORT_BY_TIME_ACCESS		2
-#define SORT_BY_TIME_CREATION	3
-
-extern int	errno;
-
-typedef char		t_bool;
-typedef char		t_sort_type;
-
-typedef struct		s_flags
-{
-	t_bool			list;
-	t_bool			recursive;
-	t_bool			show_hidden;
-	t_bool			reverse;
-	t_sort_type		sort_type;
-}					t_flags;
-
-typedef struct stat	t_stat;
-
-
-void	illegal_option(char option)
-{
-	ft_dprintf(2, "ls: illegal option -- %c\n", option);
-	ft_dprintf(2, USAGE_STR);
-	exit(1);
-}
-
-void	parse_flags(char ***argv, int *argc, t_flags *flags)
-{
-	const char	*argument;
-
-	while ((argument = **argv) && argument[0] == '-')
-	{
-		(*argv)++;
-		(*argc)--;
-
-		if (ft_strcmp(argument, "--") == 0)
-			break ;
-		argument++;
-		while (*argument)
-		{
-			if (*argument == 'l')
-				flags->list = TRUE;
-			else if (*argument == 'R')
-				flags->recursive = TRUE;
-			else if (*argument == 'a')
-				flags->show_hidden = TRUE;
-			else if (*argument == 'r')
-				flags->reverse = TRUE;
-			else if (*argument == 't')
-				flags->sort_type = SORT_BY_TIME_MODIFIED;
-			else
-				illegal_option(*argument);
-			argument++;
-		}
-	}
-}
-
-typedef struct	s_file
-{
+struct	file_info {
 	char		*name;
-	t_stat		stat;
-}				t_file;
+	struct stat	stat;
+};
 
-typedef struct	s_failed_file
-{
-	char		*name;
-	int			error_code;
-}				t_failed_file;
+struct	failed_file_info {
+	char	*name;
+	int	error_code;
+};
 
-int		failed_cmp(const void *a, const void *b)
+static int	failed_cmp(const void *a, const void *b)
 {
-	return ft_strcmp(((t_failed_file *)a)->name,((t_failed_file *)b)->name);
+	return ft_strcmp(((struct failed_file_info *)a)->name,((struct failed_file_info *)b)->name);
 }
 
-void	print_failed_files(t_failed_file *failed, int count)
+static void	print_failed_files(struct failed_file_info *failed, int count)
 {
-	qsort(failed, count, sizeof(t_failed_file), failed_cmp); //TODO: implement own qsort
-	for (int i = 0; i < count; i++)
-	{
+	qsort(failed, count, sizeof(failed[0]), failed_cmp);
+	for (int i = 0; i < count; i++)	{
 		ft_printf("ls: %s: %s\n", failed[i].name, strerror(failed[i].error_code));
 	}
 }
 
-void	process_passed_files(char **file_names, int file_names_count, t_flags flags)
+static void	sort_passed_files_by_type(
+				char **file_names,
+				struct failed_file_info *failed, int *failed_count,
+				struct file_info *files, int *files_count,
+				struct file_info *directories, int *directories_count)
 {
-	(void)flags;
-	t_stat			info;
-	char			*filename;
-	t_failed_file	*failed;
-	int				failed_count;
-	t_file			*files;
-	int				files_count;
-	t_file			*directories;
-	int				directories_count;
+	char		*name;
+	struct stat	info;
 
-	failed = (t_failed_file*)ft_memalloc(sizeof(t_failed_file) * file_names_count);
-	failed_count = 0;
-	files = (t_file*)ft_memalloc(sizeof(t_file) * file_names_count);
-	files_count = 0;
-	directories = (t_file*)ft_memalloc(sizeof(t_file) * file_names_count);
-	directories_count = 0;
-	while ((filename = *file_names) != NULL)
-	{
-		if (lstat(filename, &info) == 0)
-		{
-			if (S_ISDIR(info.st_mode))
-				directories[directories_count++] = (t_file){ filename, info };
-			else
-				files[files_count++] = (t_file){ filename, info };
-		}
-		else
-		{
-			failed[failed_count++] = (t_failed_file){ filename, errno };
+	while ((name = *file_names) != NULL) {
+		if (lstat(name, &info) == 0) {
+			if (S_ISDIR(info.st_mode)) {
+				directories[*directories_count].name = name;
+				directories[*directories_count].stat = info;
+				(*directories_count)++;
+			} else {
+				files[*files_count].name = name;
+				files[*files_count].stat = info;
+				(*files_count)++;
+			}
+		} else {
+			failed[*failed_count].name = name;
+			failed[*failed_count].error_code = errno;
+			(*failed_count)++;
 		}
 		file_names++;
 	}
-	print_failed_files(failed, failed_count);
-	ft_printf("FILES: %d\n", files_count);
-	ft_printf("DIRS: %d\n", directories_count);
+}
+
+void	process_passed_files(char **file_names, int file_names_count, struct ls_flags flags)
+{
+	(void)flags;
+	struct failed_file_info	*failed;
+	int			failed_count = 0;
+	struct file_info	*files;
+	int			files_count = 0;
+	struct file_info	*directories;
+	int			directories_count = 0;
+
+	failed = ft_memalloc(sizeof(struct failed_file_info) * file_names_count);
+	files = ft_memalloc(sizeof(struct file_info) * file_names_count);
+	directories = ft_memalloc(sizeof(struct file_info) * file_names_count);
+	sort_passed_files_by_type(file_names, failed, &failed_count, files, &files_count, directories, &directories_count);
+	if (failed_count > 0) {
+		print_failed_files(failed, failed_count);
+	}
 	free(failed);
+
 	free(files);
 	free(directories);
 }
@@ -139,15 +84,16 @@ void	process_passed_files(char **file_names, int file_names_count, t_flags flags
 int main(int argc, char **argv)
 {
 	(void)argc;
-	static char	*default_files[] = { "." };
-	t_flags	flags;
+	static char	*dotav[] = { "." };
+	struct ls_flags	flags;
 
 	argv++;
 	argc--;
 	parse_flags(&argv, &argc, &flags);
-	if (*argv == NULL)
-		process_passed_files(default_files, 1, flags);
-	else
+	if (*argv == NULL) {
+		process_passed_files(dotav, 1, flags);
+	} else {
 		process_passed_files(argv, argc, flags);
+	}
 	return (0);
 }

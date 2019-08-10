@@ -1,13 +1,17 @@
 {
-    "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/CVS": true,
-        "**/.DS_Store": true,
-        "**/*.o": true,
-    },
-    "mesonbuild.configureOnOpen": true,
-		"editor.insertSpaces": false,
-		"C_Cpp.formatting": "Disabled"
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/*.o": true,
+	},
+    	"mesonbuild.configureOnOpen": true,
+	"editor.insertSpaces": false,
+        "C_Cpp.formatting": "Disabled",
+        "editor.tabSize": 8,
+        "editor.autoIndent": false,
+	"editor.detectIndentation": false,
+	"C_Cpp.default.cStandard": "c99",
 }

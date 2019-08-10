@@ -4,6 +4,7 @@ INC_DIR :=		./include
 
 SRC_DIR :=		./src
 SRC :=			main.c			\
+			parse_flags.c		\
 
 vpath %.c		$(SRC_DIR)
 
