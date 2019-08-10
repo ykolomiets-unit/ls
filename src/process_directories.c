@@ -1,16 +1,28 @@
 #include "ls.h"
 #include "libft.h"
 #include <dirent.h>
+#include <sys/errno.h>
+
+extern int	errno;
 
 static void	process_directory(struct file_info directory, struct ls_flags *flags)
 {
 	(void)flags;
-	DIR	*dirp;
+	DIR		*dirp;
+	struct dirent	*dp;
 	
 	dirp = opendir(directory.name);
 	if (dirp == NULL) {
-		
+		ft_error(0, errno, "%s", directory.name);
+		return ;
 	}
+	while ((dp = readdir(dirp))) {
+		if (ft_strcmp(dp->d_name, ".") == 0 || ft_strcmp(dp->d_name, "..") == 0) {
+			continue;
+		}
+		ft_printf("%s\n", dp->d_name);
+	}
+	closedir(dirp);
 }
 
 void		process_directories(struct file_info *directories, int directories_count,
